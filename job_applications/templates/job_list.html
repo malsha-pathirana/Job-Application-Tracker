@@ -1,0 +1,98 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<style>
+    .table-container {
+    overflow-x: auto;
+    }
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+    background: white;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    th, td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid #ddd;
+    }
+    th {
+    background-color: #2c3e50;
+    color: white;
+    }
+    tr:hover {
+    background-color: #f1f1f1;
+    }
+    .filter-bar {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    }
+    .filter-bar input, .filter-bar select {
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    }
+</style>
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>My Job Applications</h2>
+    <a href="{% url 'add_job' %}" class="btn btn-primary">+ Add Job</a>
+</div>
+
+<form method="GET" class="filter-bar">
+    <input type="text" name="q" placeholder="Search by company name..." value="{{ query }}" style="flex: 2;">
+    <select name="status" style="flex: 1;">
+        <option value="">All Statuses</option>
+        <option value="Applied" {% if status_filter == 'Applied' %}selected{% endif %}>Applied</option>
+        <option value="Interview" {% if status_filter == 'Interview' %}selected{% endif %}>Interview</option>
+        <option value="Rejected" {% if status_filter == 'Rejected' %}selected{% endif %}>Rejected</option>
+        <option value="Selected" {% if status_filter == 'Selected' %}selected{% endif %}>Selected</option>
+    </select>
+    <button type="submit" class="btn btn-secondary">Filter</button>
+</form>
+
+<div class="table-container">
+    <table>
+        <thead>
+            <tr>
+                <th>Company</th>
+                <th>Position</th>
+                <th>Applied Date</th>
+                <th>Status</th>
+                <th>Job Link</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for job in jobs %}
+            <tr>
+                <td><strong>{{ job.company_name }}</strong></td>
+                <td>{{ job.job_position }}</td>
+                <td>{{ job.applied_date }}</td>
+                <td>
+                    {% if job.status == 'Applied' %}<span class="badge badge-applied">Applied</span>
+                    {% elif job.status == 'Interview' %}<span class="badge badge-interview">Interview</span>
+                    {% elif job.status == 'Selected' %}<span class="badge badge-selected">Selected</span>
+                    {% elif job.status == 'Rejected' %}<span class="badge badge-rejected">Rejected</span>
+                    {% endif %}
+                </td>
+                <td>
+                    {% if job.job_url %}<a href="{{ job.job_url }}" target="_blank" style="color: #3498db;">View Link</a>
+                    {% else %}<span style="color: #999;">No Link</span>{% endif %}
+                </td>
+                <td>
+                    <a href="{% url 'edit_job' job.pk %}" class="btn btn-warning" style="padding: 4px 8px; font-size: 0.8rem;">Edit</a>
+                    <a href="{% url 'delete_job' job.pk %}" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.8rem;">Delete</a>
+                </td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="6" style="text-align: center; color: #777;">No applications found.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

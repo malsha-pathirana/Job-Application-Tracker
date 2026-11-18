@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div style="max-width: 500px; margin: 0 auto;" class="card">
+    <h2 style="margin-bottom: 20px; color: #2c3e50;">{{ title }}</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group"><label>Company Name</label>{{ form.company_name }}</div>
+        <div class="form-group"><label>Job Position</label>{{ form.job_position }}</div>
+        <div class="form-group"><label>Job URL (Link)</label>{{ form.job_url }}</div>
+        <div class="form-group"><label>Applied Date</label>{{ form.applied_date }}</div>
+        <div class="form-group"><label>Status</label>{{ form.status }}</div>
+
+        <div style="display: flex; justify-content: space-between; margin-top: 20px;">
+            <a href="{% url 'job_list' %}" class="btn btn-secondary">Cancel</a>
+            <button type="submit" class="btn btn-success">Save Application</button>
+        </div>
+    </form>
+</div>
+{% endblock %}
